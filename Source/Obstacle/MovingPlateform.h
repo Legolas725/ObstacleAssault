@@ -37,14 +37,25 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	float MyX=0;*/
-	UPROPERTY(EditAnywhere,Category = "Moving Plateform")
+	private:
+	UPROPERTY(EditAnywhere,Category = "Moving")
 	FVector PlateformVelocity = FVector(100,0,0);
 	UPROPERTY(VisibleAnywhere)
 	float DistanceMoved = -1;
 
-	UPROPERTY(EditAnywhere,Category = "Moving Plateform")
+	UPROPERTY(EditAnywhere,Category = "Moving")
 	float MoveDistance = 100;
+	UPROPERTY(EditAnywhere, Category="Rotation")
+	FRotator RotationVelocity;
+
 
 	FVector StartLocation; 
+	void MovePlateform(float DeltaTime);
+	void RotatePlateform(float DeltaTime);
+
+	bool ShouldPlateformReturn()const;
+	float GetDistanceMoved()const;
+
+
 
 };

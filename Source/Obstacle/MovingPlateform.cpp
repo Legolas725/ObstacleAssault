@@ -16,13 +16,11 @@ void AMovingPlateform::BeginPlay()
 {
 	Super::BeginPlay();
 
-		//AplusB = InputA+InputB;
-		StartLocation = GetActorLocation();
-		//UE_LOG(LogTemp,Display,TEXT("Configure Moved Distance :  %f"),MoveDistance);
-		FString Name = GetName();
+	StartLocation = GetActorLocation();
 
-	 UE_LOG(LogTemp, Display, TEXT("BeginPlay: %s"), *Name);
+	FString Name = GetName();
 
+	UE_LOG(LogTemp, Display, TEXT("BeginPlay: %s"), *Name);
 }
 
 // Called every frame
@@ -30,31 +28,43 @@ void AMovingPlateform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FVector CurrentLocation = GetActorLocation();
+	MovePlateform(DeltaTime);
+	RotatePlateform(DeltaTime);
+}
 
-	CurrentLocation = CurrentLocation + PlateformVelocity * DeltaTime;
 
-	SetActorLocation(CurrentLocation);
-
-	/*MyVector.X = MyVector.X + 5 ;
-	SetActorLocation(MyVector);*/
-
-	DistanceMoved = FVector::Dist(StartLocation,CurrentLocation);
-
-	if(DistanceMoved > MoveDistance)
+void AMovingPlateform::MovePlateform(float DeltaTime)
+{
+	if (ShouldPlateformReturn())
 	{
-		float OverShoot = DistanceMoved-MoveDistance;
-		//UE_LOG(LogTemp,Display,TEXT("Pateform Overshot by %f"),OverShoot);
-		FString Name = GetName();
-		UE_LOG(LogTemp, Display, TEXT("%s Plateform overshot by %f"), *Name, OverShoot);
-
-
 		FVector MoveDirection = PlateformVelocity.GetSafeNormal();
 		StartLocation = StartLocation + MoveDirection * MoveDistance;
 		SetActorLocation(StartLocation);
 		PlateformVelocity = -PlateformVelocity;
-
+	}
+	else
+	{
+		FVector CurrentLocation = GetActorLocation();
+		CurrentLocation = CurrentLocation + (PlateformVelocity * DeltaTime);
+		SetActorLocation(CurrentLocation);
 	}
 }
 
+void AMovingPlateform::RotatePlateform(float DeltaTime)
+{
+FRotator CurrentRotation = GetActorRotation();
+	CurrentRotation = CurrentRotation + RotationVelocity * DeltaTime;
+	SetActorRotation(CurrentRotation);
+}
+
+
+bool AMovingPlateform::ShouldPlateformReturn()const
+{
+	return GetDistanceMoved() > MoveDistance;
+}
+
+float AMovingPlateform::GetDistanceMoved()const
+{
+	return FVector::Dist(StartLocation, GetActorLocation());
+}
 
